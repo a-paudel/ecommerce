@@ -17,8 +17,8 @@ services:
     environment:
       - DJANGO_DB_URL=postgres://postgres:postgres@db:5432/postgres
     volumes:
-      - ./media:/app/media
-      - ./static:/app/static
+      - media_files:/app/media
+      - static_files:/app/static
     depends_on: [db]
     develop:
       watch:
@@ -40,10 +40,12 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
-      - ./media:/media:ro
-      - ./static:/static:ro
+      - media_files:/media:ro
+      - static_files:/static:ro
 
 volumes:
   db_data:
   caddy_data:
   caddy_config:
+  media_files:
+  static_files:
