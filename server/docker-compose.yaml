@@ -16,17 +16,34 @@ services:
       - .env
     environment:
       - DJANGO_DB_URL=postgres://postgres:postgres@db:5432/postgres
-    ports:
-      - "$DJANGO_PORT:$DJANGO_PORT"
+    volumes:
+      - ./media:/app/media
+      - ./static:/app/static
     depends_on: [db]
     develop:
       watch:
         - action: sync
           path: .
           target: /app
-          ignore: [.venv, node_modules, .db_data]
+          ignore: [.venv, node_modules, .db_data, media, static]
         - action: rebuild
           path: pyproject.toml
 
+  proxy:
+    image: caddy:alpine
+    depends_on:
+      - app
+    env_file: [.env]
+    ports:
+      - "${DJANGO_PORT}:${DJANGO_PORT}"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./media:/media:ro
+      - ./static:/static:ro
+
 volumes:
   db_data:
+  caddy_data:
+  caddy_config:

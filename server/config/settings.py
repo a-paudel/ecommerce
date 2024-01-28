@@ -67,6 +67,11 @@ INTERNAL_IPS = os.getenv("DJANGO_INTERNAL_IPS", "").split(";")
 # Application definition
 
 INSTALLED_APPS = [
+    "core",
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
+    #
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -75,8 +80,8 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "debug_toolbar",
-    "core",
     "users",
+    "store",
 ]
 
 MIDDLEWARE = [
@@ -159,6 +164,9 @@ STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
 }
 
 # Internationalization
@@ -178,6 +186,10 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "static"
+
+# Media files
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
