@@ -36,18 +36,18 @@ for _ in range(5):
 categories = Category.objects.all()
 
 
-def get_product_name():
-    name = fake.word()
-    is_exists = Product.objects.filter(name=name).exists()
-    if is_exists:
-        return get_product_name()
-    return name
+# def get_product_name():
+#     name = fake.word()
+#     is_exists = Product.objects.filter(name=name).exists()
+#     if is_exists:
+#         return get_product_name()
+#     return name
 
 
 # create 50 products
 for _ in range(50):
     Product.objects.create(
-        name=get_product_name(),
+        name=fake.word(),
         description=fake.paragraph(),
         # between 0 and 5 tags
         tags="\n".join(fake.words(nb=random.randint(0, 5))),

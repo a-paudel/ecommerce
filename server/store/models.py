@@ -21,7 +21,7 @@ class Product(BaseModel):
     category_id: int
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
 
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
     # tags: "models.JSONField[list[str]]" = models.JSONField(default=list)
     tags = models.TextField(default="")
@@ -29,6 +29,9 @@ class Product(BaseModel):
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField(default=0)
     images: models.Manager["ProductImage"]
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class ProductImage(BaseModel):
