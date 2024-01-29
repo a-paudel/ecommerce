@@ -36,7 +36,7 @@ GROUPS = {
 class Command(BaseCommand):
     def handle(self, *args, **options):
         for group, data in GROUPS.items():
-            new_group, created = Group.objects.get_or_create(name=group)
+            new_group, _ = Group.objects.get_or_create(name=group)
 
             for model, perms in data.items():
                 for perm in perms:

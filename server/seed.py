@@ -14,11 +14,24 @@ import sys
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
-from store.models import Category, Product, ProductImage
+from store.models import Category, Product, ProductImage  # noqa: E402
+from users.models import User, Group
 
 if not settings.DEBUG:
     print("The DEBUG option is not enabled.")
     sys.exit(1)
+
+# create users if they dont exist
+for username in ["owner", "manager", "employee", "customer"]:
+    user, _ = User.objects.get_or_create(username=username)
+    user.set_password("password")
+    if username != "customer":
+        user.is_staff = True
+    user.save()
+    group, _ = Group.objects.get_or_create(name=username)
+    # assign user to group
+    user.groups.add(group)
+
 
 for model in apps.get_app_config("store").get_models():
     model.objects.all().delete()
