@@ -9,5 +9,5 @@ http://localhost:{$DJANGO_PORT} {
 		file_server
 	}
 
-	reverse_proxy app:{$DJANGO_PORT}
+	reverse_proxy server:{$DJANGO_PORT}
 }

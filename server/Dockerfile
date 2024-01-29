@@ -1,5 +1,8 @@
 FROM python:3.11.6-slim
 
+RUN apt update
+RUN apt install postgresql-client -y
+
 WORKDIR /app
 RUN pip install pdm
 COPY pyproject.toml pdm.lock ./

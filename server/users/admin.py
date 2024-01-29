@@ -3,10 +3,9 @@ from django.contrib import admin
 from django.contrib.auth.hashers import make_password
 from django.forms import Form
 from django.http import HttpRequest
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin, ModelAdminMixin
 from users.models import User, Group
 from django.contrib.auth.models import Group as _Group
-from django.contrib.auth.admin import UserAdmin
 from django.db import models
 from django import forms
 
@@ -17,19 +16,29 @@ admin.site.unregister(_Group)
 # admin.site.register(User)
 @admin.register(User)
 class UserAdmin(ModelAdmin):
+    class UserForm(forms.ModelForm):
+        class Meta:
+            model = User
+            # fields = "__all__"
+            fields = ["username", "password", "is_superuser", "is_staff", "is_active", "groups"]
+            widgets = {
+                "groups": forms.CheckboxSelectMultiple,
+            }
+
+        def save(self, commit: bool = True) -> Any:
+            # if first time saving the user, hash the password
+            if not self.instance.pk:
+                self.instance.password = make_password(self.cleaned_data["password"])
+
+            return super().save(commit)
+
     search_fields = ["username"]
-    list_display = ["username", "is_staff"]
-    # fields = ["username", "password", "groups", "superuser_status", ]
+    form = UserForm
+    list_display = ["username", "_groups", "is_staff"]
 
-    formfield_overrides = {
-        models.ManyToManyField: {"widget": forms.CheckboxSelectMultiple},
-    }
-
-    def save_model(self, request: HttpRequest, obj: User, form: Form, change: Any) -> None:
-        user = form.save(commit=False)  # type: ignore
-        user.password = make_password(form.cleaned_data["password"])
-        user.save()
-        # return super().save_model(request, obj, form, change)
+    def _groups(self, obj):
+        groups = obj.groups.all()
+        return ", ".join([group.name for group in groups])
 
 
 @admin.register(Group)

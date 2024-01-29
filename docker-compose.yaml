@@ -9,8 +9,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  app:
-    build: .
+  server:
+    build: ./server
     command: python manage.py runserver 0.0.0.0:$DJANGO_PORT
     env_file:
       - .env
@@ -23,16 +23,16 @@ services:
     develop:
       watch:
         - action: sync
-          path: .
+          path: ./server
           target: /app
           ignore: [.venv, node_modules, .db_data, media, static]
         - action: rebuild
-          path: pyproject.toml
+          path: ./server/pyproject.toml
 
   proxy:
     image: caddy:alpine
     depends_on:
-      - app
+      - server
     env_file: [.env]
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"

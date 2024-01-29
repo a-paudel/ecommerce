@@ -38,6 +38,8 @@ class ProductAdmin(ModelAdmin):
 
     list_display = ["name", "safe_description", "category", "safe_tags", "safe_images", "base_price", "stock"]
     list_editable = ["base_price", "stock"]
+    fields = ["name", "description", "category", "tags", "base_price", "stock"]
+    inlines = [ImageInline]
     form = ProductAdminForm
 
     @admin.display(description="Description")
@@ -70,5 +72,3 @@ class ProductAdmin(ModelAdmin):
         image_display = f"<div style='display:flex; align-items:center; gap: 2px;'>{image_display}</div>"
 
         return mark_safe(image_display)
-
-    inlines = [ImageInline]
