@@ -36,11 +36,21 @@ class ProductAdmin(ModelAdmin):
                 "description": WysiwygWidget,
             }
 
-    list_display = ["name", "safe_description", "category", "safe_tags", "safe_images", "base_price", "stock"]
+    list_display = [
+        "name",
+        "safe_description",
+        "category",
+        "safe_tags",
+        "safe_images",
+        "base_price",
+        "stock",
+    ]
     list_editable = ["base_price", "stock"]
     fields = ["name", "description", "category", "tags", "base_price", "stock"]
     inlines = [ImageInline]
     form = ProductAdminForm
+    list_per_page = 10
+    search_fields = ["name", "description", "tags", "category__name"]
 
     @admin.display(description="Description")
     def safe_description(self, obj):
@@ -50,10 +60,12 @@ class ProductAdmin(ModelAdmin):
     @admin.display(description="Tags")
     def safe_tags(self, obj):
         tag_string: str = obj.tags
+        if tag_string.strip() == "":
+            return mark_safe("<em>No tags</em>")
         tags = tag_string.splitlines()[:3]
         tag_display = ""
         for tag in tags:
-            tag_display += f"<span style='border-radius:999px; background:darkgray; color:black; padding:5px; margin:2px'>{tag}</span>"
+            tag_display += f"<span style='border-radius:999px; background:darkgray; color:black; padding:5px; margin:2px; font-size:0.8rem;'>{tag}</span>"
         num_remaining = len(tag_string.splitlines()) - 3
         if num_remaining > 0:
             tag_display += f"<span>+{num_remaining} more</span>"
@@ -62,6 +74,8 @@ class ProductAdmin(ModelAdmin):
     @admin.display(description="Images")
     def safe_images(self, obj: Product):
         images = obj.images.all()
+        if images.count() == 0:
+            return mark_safe("<em>No images</em>")
         # display the first image and add a +n images label if there are more
         image_display = (
             f"<img src='{images[0].image.url}' alt='{images[0].image.name}' width='50' class='product-image'>"

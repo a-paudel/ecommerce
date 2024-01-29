@@ -1,11 +1,11 @@
 http://localhost:{$DJANGO_PORT} {
 	handle_path /static/* {
-		root * /static
+		root * /app/static
 		file_server
 	}
 
 	handle_path /media/* {
-		root * /media
+		root * /app/media
 		file_server
 	}
 

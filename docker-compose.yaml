@@ -39,9 +39,9 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
-      - caddy_config:/config
-      - media_files:/media:ro
-      - static_files:/static:ro
+      - caddy_config:/app/config
+      - media_files:/app/media:ro
+      - static_files:/app/static:ro
 
 volumes:
   db_data:
